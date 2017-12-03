@@ -32,7 +32,8 @@ public class MainActivity extends AppCompatActivity {
         savList.add(new SomeClass_3("First", 77, 2.7));
         savList.add(new SomeClass_3("Second", 88, 2.8));
 
-
+        ObjectList<SomeClass_3> objList = new ObjectList<>("pref_name_1");
+        objList.add(new SomeClass_3("First", 77, 2.7));
 
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
