@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
     Button button1;
     Button button2;
     SomeClass sClass;
+    SaveLoad saveLoad;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +26,13 @@ public class MainActivity extends AppCompatActivity {
         button1 = (Button) findViewById(R.id.button1);
         button2 = (Button) findViewById(R.id.button2);
         sClass = new SomeClass(this);
+        saveLoad = new SaveLoad(this);
+
+        SaveableArrayList<SomeClass_3> savList = new SaveableArrayList<>();
+        savList.add(new SomeClass_3("First", 77, 2.7));
+        savList.add(new SomeClass_3("Second", 88, 2.8));
+
+
 
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
@@ -37,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.button2:
                         sClass.loadParam();
                         text.setText(sClass.param1);
+                        saveLoad.saveParamList(sClass);
+                        saveLoad.saveObjList(sClass);
                         break;
                 }
             }

@@ -32,6 +32,13 @@ public class SomeClass implements ICanSave {
         saveload.saveStringArray(list, "SOME_CLASS");
     }
 
+    /**VERSION_2
+     * bad idea -- too many methods in class (and interface)
+     * good thing -- method calls from class of interface, not from SaveLoad class*/
+    /*public void saveParam() {
+        saveload.saveStringArray(getParamList(), "SOME_CLASS");
+    }*/
+
     @Override
     public void loadParam() {
         ArrayList<String> list = saveload.loadStringArray("SOME_CLASS");
@@ -82,6 +89,16 @@ public class SomeClass implements ICanSave {
     @Override
     public void setParamList(ArrayList<String> list) {
         param1 = list.get(0);
-        param2 = Integer.parseInt(list.get(0));
+        param2 = Integer.parseInt(list.get(1));
+    }
+
+    @Override
+    public void createNew() {
+//        SomeClass();
+    }
+
+    @Override
+    public void createInstance() {
+
     }
 }

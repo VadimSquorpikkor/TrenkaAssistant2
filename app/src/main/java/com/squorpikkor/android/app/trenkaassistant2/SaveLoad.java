@@ -2,7 +2,11 @@ package com.squorpikkor.android.app.trenkaassistant2;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Created by VadimSquorpikkor on 22.08.2017.
@@ -76,6 +80,27 @@ class SaveLoad{
         return loadDouble(preferences);
     }
 
+    void saveString(String s, String prefName) {
+        preferences = context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
+        saveString(s, preferences);
+    }
+
+    String loadString(String prefName) {
+        preferences = context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
+        return loadString(preferences);
+    }
+
+    void saveInteger(int i, String prefName) {
+        preferences = context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
+        saveInteger(i, preferences);
+    }
+
+    int loadInteger(String prefName) {
+        preferences = context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
+        return loadInteger(preferences);
+    }
+
+    /**PRIVATE METHODS************************************/
 
     private void saveStringArray(ArrayList<String> list, SharedPreferences sPref) {//It should be own class, for better composition -- it can be using in another classes
         int count = 0;
@@ -137,6 +162,34 @@ class SaveLoad{
         return d;
     }
 
+    private void saveString(String s, SharedPreferences sPref) {
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putString(SAVE_FIELD, s);
+        editor.apply();
+    }
+
+    private String loadString(SharedPreferences sPref) {
+        String s = "";
+        if (sPref.contains(SAVE_FIELD)) {
+            s = sPref.getString(SAVE_FIELD, "");
+        }
+        return s;
+    }
+
+    private void saveInteger(int i, SharedPreferences sPref) {
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putInt(SAVE_FIELD, i);
+        editor.apply();
+    }
+
+    private int loadInteger(SharedPreferences sPref) {
+        int i = 0;
+        if (sPref.contains(SAVE_FIELD)) {
+            i = sPref.getInt(SAVE_FIELD, 0);
+        }
+        return i;
+    }
+
     /**
      **************************************************************************************************************
      * for thinking about
@@ -180,18 +233,17 @@ class SaveLoad{
         }
     }*/
 
-    /**
-     **************************************************************************************************************
+    /***********************************************************************************************
      * for thinking about 2
      * */
 
 
-    /**for saving single object. This only one name for Shared Preferences*/
+/**for saving single object. This only one name for Shared Preferences*/
     public void saveParamList(ICanSave iCanSave) {
         saveStringArray(iCanSave.getParamList(), iCanSave.getPrefName());
     }
 
-    /**overloading method for saving multiple object of one class -- for saving list of objects
+/**overloading method for saving multiple object of one class -- for saving list of objects
      * just only for saveObjList_VERSION_1 */
     public void saveParamList(ICanSave iCanSave, int count) {
         saveStringArray(iCanSave.getParamList(), iCanSave.getPrefName() + count);
@@ -201,10 +253,10 @@ class SaveLoad{
         iCanSave.setParamList(loadStringArray(iCanSave.getPrefName()));
     }
 
-    /*
-    *//**VERSION_1: for saving each object in own file
-     * the method lack is -- i don't know how to clear old useless files*//*
-    public void saveObjList(ArrayList<ICanSave> list) {
+
+/**VERSION_1: for saving each object in own file
+     * the method lack is -- i don't know how to clear old useless files*/
+    /*public void saveObjList(ArrayList<ICanSave> list) {
         int i = 0;
         for (ICanSave iCanSave : list) {
             saveParamList(iCanSave, i);
@@ -212,11 +264,13 @@ class SaveLoad{
         }
     }*/
 
-    /**VERSION_2: for saving every object params in single file
+
+/**VERSION_2: for saving every object params in single file
      * thoughts i should add the size of paramList to savingList (in [0] line)
      * that's how i will load the obj list -- first of all
      * i will get the count of parameters to know how to separate
-     * the savingList -- there all parameters of all objects in one file together */
+     * the savingList -- there all parameters of all objects in one file together
+     * or -- use iCan.getParamList.size()*/
     public void saveObjList(ArrayList<ICanSave> list) {
         ArrayList<String> savingList = new ArrayList<>();
         for (ICanSave iCanSave : list) {
@@ -225,6 +279,74 @@ class SaveLoad{
         saveStringArray(savingList, list.get(0).getPrefName() + "_LIST");
     }
 
+
+/**there's will be          /////wrong!//"this"///////          link in iCanSave place in parameters when this method will be called*/
+    public void loadObjList(ArrayList<ICanSave> list, ICanSave iCanSave) {
+        ArrayList<String> loadedList = loadStringArray(iCanSave.getPrefName() + "_LIST");
+        int paramListSize = iCanSave.getParamList().size();
+//        Type listType = new TypeToken<list>(){}.getType();
+//        String className =
+//        Class cl = Class.forName(className);
+        for (int i = 0; i < loadedList.size()/paramListSize; i++) {
+//            list.add(new iCanSave.getClass() {
+//            list.add(new Class)
+        }
+    }
+
+    public void loadObjList2(ArrayList<ICanSave> list) {
+
+//        Class cl = list.get(0).getClass();
+//        ArrayList<ICanSave> newList = new ArrayList<>();
+//        newList.add(cl.newInstance());
+
+//        Class cl = context.getClass();
+//        ArrayList<ICanSave> newList = new ArrayList<>();
+//        newList.add(cl.newInstance());
+
+        Class cl = list.get(0).getClass();
+        ArrayList<ICanSave> newList = new ArrayList<>();
+        /*newList.add(cl.getConstructor().newInstance());
+*/
+
+    }
+
+    /*public void loadObjList(ArrayList<ICanSave> list, Class<?> clazz) {
+        ArrayList<ICanSave> tempList = list;
+        list.clear();
+        ArrayList<String> loadedList = loadStringArray(tempList.get(0).getPrefName() + "_LIST");
+        int paramListSize = tempList.get(0).getParamList().size();
+        for (int i = 0; i < loadedList.size()/paramListSize; i++) {
+//            list.add(new (tempList.get(0).getClass().getSimpleName()));
+            list.add(new clazz());
+        }
+    }*/
+
+public void loadObjList(ArrayList<SomeClass_2> list) {
+
+    }
+
+
+
+    /**for thinking about 3 **********************************************************************/
+
+    public void saveObjList(ICanSave iCanSave) {
+        ArrayList<String> savingList = new ArrayList<>();
+        
+    }
+
+    private <T> ArrayList<T> pushBack(ArrayList<T> list, Class<T> typeKey) throws Exception {
+        list.add(typeKey.getConstructor().newInstance());
+        return list;
+    }
+
+    /*public void loadObjList3(ArrayList<ICanSave> list) {
+        ArrayList<String> loadedList = loadStringArray(iCanSave.getPrefName() + "_LIST");
+        int paramListSize = iCanSave.getParamList().size();
+        for (int i = 0; i < loadedList.size()/paramListSize; i++) {
+//            list.add(new iCanSave.getClass() {
+//            list.add(new Class)
+        }
+    }*/
 
 
 }

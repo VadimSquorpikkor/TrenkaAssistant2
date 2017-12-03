@@ -15,6 +15,9 @@ public interface ICanSave {
     String getPrefName();
     ArrayList<String> getParamList();
     void setParamList(ArrayList<String> list);
+    void createNew();
+
+    void createInstance();
 
     /**
      * Realization for methods:
